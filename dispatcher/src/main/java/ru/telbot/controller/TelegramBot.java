@@ -1,7 +1,10 @@
 package ru.telbot.controller;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -9,16 +12,28 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.annotation.PostConstruct;
+
 @Component
+//@PropertySource(value = "classpath:/dispatcher.application.properties")
 public class TelegramBot extends TelegramLongPollingBot {
 
-    @Value("${bot.name}")
-    String botName;
-
-    @Value("${bot.token}")
-    String botToken;
-
     private static final Logger log = Logger.getLogger(TelegramBot.class);
+//    @Value("${bot.name}")
+    private String botName = "kodi_meverik_bot";
+//    @Value("${bot.token}")
+    private String botToken = "6668761210:AAG2cF5-Yv96k_5ryq1AmUKlUOcbsp62xsM";
+    @Autowired
+    private UpdateController updateController;
+
+//    public TelegramBot(UpdateController updateController) {
+//        this.updateController = updateController;
+//    }
+
+    @PostConstruct
+    public void init() {
+        updateController.registerBot(this);
+    }
 
     public TelegramBot() {
     }
